@@ -1,0 +1,15 @@
+module.exports = (sequelize, Sequelize) => {
+    const Kbdoc = sequelize.define("kbdoc", {
+      title: {
+        type: Sequelize.STRING
+      },
+      description: {
+        type: Sequelize.STRING
+      },
+      published: {
+        type: Sequelize.BOOLEAN
+      }
+    });
+    
+    return Kbdoc;
+  };
