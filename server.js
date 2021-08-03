@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const multer = require("multer");
 
 const db = require("./app/models");
 db.sequelize.sync();
@@ -8,12 +9,13 @@ db.sequelize.sync();
 const path = __dirname + '/app/views/';
 
 const app = express();
+const uploadRouter=require('./kb_upload/routers/file.router')
 
 app.use(express.static(path));
 
 
 var corsOptions = {
-  origin: "http://localhost:3001"
+  origin: "http://localhost:3002"
 };
 
 app.use(cors(corsOptions));
@@ -43,10 +45,10 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/kbdoc.routes.js")(app);
+app.use('/file',uploadRouter)
 
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log("Running on " + PORT);
+  console.log(`Server on at http://localhost:${PORT}`);
 });
 module.exports = app;
