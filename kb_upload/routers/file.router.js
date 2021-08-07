@@ -7,7 +7,8 @@ const fileWorker = require("../controllers/file.controller.js");
 router.post("/api/file/upload", upload.single("file"), fileWorker.uploadFile);
 
 router.get("/api/file/info", fileWorker.listAllFiles);
+router.get("/api/file/:id", fileWorker.findOne);
 
-router.get("/api/file/:id", fileWorker.downloadFile);
+router.get("/api/file/download/:id", fileWorker.downloadFile);
 
 module.exports = router;

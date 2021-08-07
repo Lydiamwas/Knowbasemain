@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/kbdoc.routes.js")(app);
 app.use("/file", uploadRouter);
-
+//root route
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server on at http://localhost:${PORT}`);
