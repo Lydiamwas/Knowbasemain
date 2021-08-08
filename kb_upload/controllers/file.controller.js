@@ -1,10 +1,13 @@
 var stream = require("stream");
 
 const db = require("../models");
+const Op = db.Sequelize.Op;
 const File = db.files;
 
 exports.uploadFile = (req, res) => {
   File.create({
+    title: req.body.title,
+    description: req.body.description,
     type: req.file.mimetype,
     name: req.file.originalname,
     data: req.file.buffer,
@@ -22,18 +25,44 @@ exports.uploadFile = (req, res) => {
 };
 
 exports.listAllFiles = (req, res) => {
-  File.findAll({ attributes: ["id", "name"] })
-    .then((files) => {
-      res.json(files);
+  const title = req.query.title;
+  var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+
+  File.findAll({ where: condition })
+    .then((data) => {
+      res.send(data);
     })
     .catch((err) => {
-      console.log(err);
-      res.json({ msg: "Error", detail: err });
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Kbdocs.",
+      });
+    });
+
+  // File.findAll({ attributes: ["id", "title", "description", "name"] })
+  //   .then((files) => {
+  //     res.json(files);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     res.json({ msg: "Error", detail: err });
+  //   });
+};
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  File.findByPk(id)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error retrieving Kbdoc with id=" + id,
+      });
     });
 };
 
 exports.downloadFile = (req, res) => {
-  File.findById(req.params.id)
+  File.findByPk(req.params.id)
     .then((file) => {
       var fileContents = Buffer.from(file.data, "base64");
       var readStream = new stream.PassThrough();
